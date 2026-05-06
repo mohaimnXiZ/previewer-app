@@ -30,6 +30,12 @@ class HomeScreen extends StatelessWidget {
       'https://cdn.pixabay.com/download/objects3d/2026/03/08/processed_3943__5d256c038d.glb?filename=gustavorezende-dart-3943.glb';
   static const String _treeModelUrl =
       'https://cdn.pixabay.com/download/objects3d/2025/06/30/processed_11__525746f65f.glb?filename=blendertimer-tree-11.glb';
+  static const String _stratocasterUsdzUrl =
+      'https://developer.apple.com/augmented-reality/quick-look/models/stratocaster/fender_stratocaster.usdz';
+  static const String _toyDrummerUsdzUrl =
+      'https://developer.apple.com/augmented-reality/quick-look/models/drummertoy/toy_drummer.usdz';
+  static const String _pancakesUsdzUrl =
+      'https://developer.apple.com/augmented-reality/quick-look/models/pancakes/pancakes_photogrammetry.usdz';
 
   static Uri _sceneViewerIntentUri({
     required String packageName,
@@ -129,6 +135,33 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
+  static Future<void> _openIosQuickLook(
+    BuildContext context, {
+    required String modelUrl,
+  }) async {
+    final uri = Uri.parse(modelUrl);
+    try {
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (launched) {
+        return;
+      }
+    } catch (_) {}
+
+    if (!context.mounted) {
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BrowserScreen(title: 'USDZ Preview', url: modelUrl),
+      ),
+    );
+  }
+
   Widget _buildModelButton(
     BuildContext context, {
     required String label,
@@ -142,6 +175,24 @@ class HomeScreen extends StatelessWidget {
           foregroundColor: Colors.white,
         ),
         onPressed: () => _openArSceneViewer(context, modelUrl: modelUrl),
+        child: Text(label),
+      ),
+    );
+  }
+
+  Widget _buildIosModelButton(
+    BuildContext context, {
+    required String label,
+    required String modelUrl,
+  }) {
+    return SizedBox(
+      width: 220,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black87,
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () => _openIosQuickLook(context, modelUrl: modelUrl),
         child: Text(label),
       ),
     );
@@ -298,10 +349,19 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            const Center(
+            const Padding(
+              padding: EdgeInsets.only(left: 18),
               child: Text(
                 'AR Examples',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Padding(
+              padding: EdgeInsets.only(left: 18),
+              child: Text(
+                'Android',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
             const SizedBox(height: 16),
@@ -325,6 +385,38 @@ class HomeScreen extends StatelessWidget {
                 label: 'Show Tree 3D Model',
                 modelUrl: _treeModelUrl,
               ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.only(left: 18),
+              child: Text(
+                'iPhone',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Column(
+                children: [
+                  _buildIosModelButton(
+                    context,
+                    label: 'Show Stratocaster Model',
+                    modelUrl: _stratocasterUsdzUrl,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildIosModelButton(
+                    context,
+                    label: 'Show Toy Drummer Model',
+                    modelUrl: _toyDrummerUsdzUrl,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildIosModelButton(
+                    context,
+                    label: 'Show Pancakes Model',
+                    modelUrl: _pancakesUsdzUrl,
+                  ),
                 ],
               ),
             ),
