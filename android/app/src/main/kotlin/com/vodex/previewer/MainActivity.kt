@@ -1,4 +1,4 @@
-package com.example.wikipedia_webview
+package com.vodex.previewer
 
 import io.flutter.embedding.android.FlutterActivity
 
